@@ -1,4 +1,4 @@
-﻿import * as http from "http";
+import * as http from "http";
 import * as url from "url"; // űrlapokhoz, input kiolvasás
 import * as fs from "fs"; // file-kezelés
 import { Hivas } from "./hivas";
@@ -7,10 +7,11 @@ export class Content {
 
     Content(req: http.ServerRequest, res: http.ServerResponse): void {
         res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+        res.write('<head><title>szamla</title></head>');
         res.write('<body bgcolor="grey"');
-        res.write("<h1>Telefonszámla.</h1>");
-
-        res.write("<p>1. feladat: kérem írjon be egy telefonszámot!</p>"); //1. feladat
+        res.write("<h1>Telefonszámla (szamla):</h1>");
+        //1. feladat:
+        res.write("<p>1. feladat: kérem írjon be egy telefonszámot!</p>");
         res.write('<form type="post" name="input">');
         res.write('<input type="number" name="telefonszamInput">');
         //res.write('<input type="submit" value="Elküld">');
@@ -30,13 +31,12 @@ export class Content {
                 res.write("<p>A beírt telefonszám vezetékes készülékhez tartozik.</p>");
             }
         }
+        //2. feladat:
+        res.write("<p>2. feladat: kérem adjon meg egy kezdeti, és egy hívás vége időpontot!</p>");
 
-        res.write("<p>2. feladat: kérem adjon meg egy kezdeti, és egy hívás vége időpontot!</p>"); //2. feladat
-
-        //res.write('<form type="post" name="idoInput">');
         res.write("<table>");
-        res.write('<tr><td>Kezdeti időpont: </td><td><input type="text" name="kezdetiIdoInput" placeholder="Óra Perc Mp" value="0 0 0"></td></tr>');
-        res.write('<tr><td>Végső időpont vagy hogy mondjam: </td><td><input type="text" name="vegeIdoInput" placeholder="Óra Perc Mp" value="0 0 0"></tr></td>');
+        res.write('<tr><td>Hívás kezdete: </td><td><input type="text" name="kezdetiIdoInput" placeholder="Óra Perc Mp" value="0 0 0"></td></tr>');
+        res.write('<tr><td>Hívás vége: </td><td><input type="text" name="vegeIdoInput" placeholder="Óra Perc Mp" value="0 0 0"></tr></td>');
         res.write('<tr><td></td><td><input type="submit" value="Elküld"></td></tr>');
         res.write("</table></form>");
 
@@ -46,45 +46,34 @@ export class Content {
         if (!(kezdetiIdoInput === "") && !(vegeIdoInput === "")) {
 
             let ar: number;
-            //csúcsidő 7 és 18 óra közt van
-            //vezetékes számnál a díjazás:
 
-            let mostaniHivas: Hivas = new Hivas(kezdetiIdoInput, vegeIdoInput, telefonszamInput);
+            let mostaniHivas: Hivas = new Hivas(kezdetiIdoInput + " " + vegeIdoInput, telefonszamInput);
 
-            if (mostaniHivas.Mobilszam() == true) {
-                if (parseInt(kezdetiIdoInput.substring(0, 1)) >= 7 && parseInt(kezdetiIdoInput.substring(0, 1)) <= 18)
-                    ar = mostaniHivas.HosszPercben() * 69.175;  //csúcsidős a hívás
-                else ar = mostaniHivas.HosszPercben() * 46.675; //csúcsidőn kívüli
-            }
-            else {//Ha vezetékes
-                if (parseInt(kezdetiIdoInput.substring(0, 1)) >= 7 && parseInt(kezdetiIdoInput.substring(0, 1)) <= 18)
-                    ar = mostaniHivas.HosszPercben() * 30;  //csúcsidős a hívás
-                else ar = mostaniHivas.HosszPercben() * 15; //csúcsidőn kívüli
-            }
-            res.write("A hívás ára: " + ar);
+            res.write("A hívás hossza:" + mostaniHivas.KiszamlazottPercek());
         }
 
-        res.write("<p>3. feladat:</p>");
+        //3. feladat:
 
         const sorok: string[] = fs.readFileSync("hivasok.txt").toString().split("\r\n");
 
         const ws: fs.WriteStream = fs.createWriteStream("percek.txt");
 
-        let kiirando: string;
+        let kiirando: string = "";
 
-        let Hivasok: Hivas[];
+        let Hivasok: Hivas[] = [];
 
-        for (let i: number = 0; i < sorok.length; i++){
-            let aktHivas: Hivas = new Hivas(sorok[i].substring(0, 4), sorok[i].substring(5, 9), sorok[i + 1]); //ez it lehet hogy kiindexel i+1-nél! //substringeknél baj lehet, mert nem biztos hogy úgy számol!
+        for (let i: number = 0; i < sorok.length - 1; i++) {
+            let aktHivas: Hivas = new Hivas(sorok[i], sorok[i + 1]);
             Hivasok.push(aktHivas);
-
-            kiirando = '' + Hivasok[i].KiszamlazottPercek + ' ' + Hivasok[i].telefonszam;
         }
 
-        for (let i: number; i < Hivasok.length; i++) ws.write(kiirando);
+        for (let i: number = 0; i < Hivasok.length; i++) {
+            kiirando = '' + Hivasok[i].KiszamlazottPercek() + ' ' + Hivasok[i].telefonszam;
+            i++;
+            ws.write(kiirando+"\r\n");
+        }
         
-        res.write("<p>3. feladat kész!</p>");
-
+        //4. feladat:
         res.write("<p>4. feladat:</p>");
 
         let dbCsucsido: number = 0;
@@ -105,15 +94,37 @@ export class Content {
         let osszMobilszamPerc: number = 0;
         let osszVezetkesesPerc: number = 0;
 
-        for (let i: number = 0; i < sorok.length; i++) {
-            let aktualisHivas: Hivas = new Hivas("0 0 0", "0 0 0", sorok[i + 1]);
+        for (let i: number = 0; i < sorok.length-1; i++) {
+
+            let aktualisHivas: Hivas = new Hivas(sorok[i], sorok[i + 1]);
+
             if (aktualisHivas.Mobilszam() == true)
-                osszMobilszamPerc = osszMobilszamPerc + aktualisHivas.HosszPercben();
-            else osszVezetkesesPerc = osszVezetkesesPerc + aktualisHivas.HosszPercben();
+                osszMobilszamPerc = osszMobilszamPerc + aktualisHivas.HosszMPercben();
+            else osszVezetkesesPerc = osszVezetkesesPerc + aktualisHivas.HosszMPercben();
         }
 
         res.write("<p>Mobilszámmon beszélgetett percek: " + osszMobilszamPerc + "</p>");
         res.write("<p>Vezetékes számon beszélgetett percek: " + osszVezetkesesPerc + "</p>");
+
+        res.write("<p>6. feladat:</p>");
+
+        let csucsdijasOsszeg: number = 0;
+
+        for (let i: number = 0; i < sorok.length - 1; i++) {
+            
+            let stringSeged: string[] = sorok[i].split(" ");
+
+            if (parseInt(stringSeged[0]) >= 7 && parseInt(stringSeged[0]) <= 18) { //Amennyiben csúcsdíjas
+                
+                let aktualisHivas: Hivas = new Hivas(sorok[i], sorok[i + 1]); //lehetséges hogy ki fog indexelni
+
+                if (aktualisHivas.Mobilszam() == true) 
+                    csucsdijasOsszeg = csucsdijasOsszeg + aktualisHivas.KiszamlazottPercek() * 69.175;
+                else csucsdijasOsszeg = csucsdijasOsszeg + aktualisHivas.KiszamlazottPercek() * 30;
+            }    
+        }
+
+        res.write("<p>A csúcsidőben beszélt percek díja: " + csucsdijasOsszeg + "</p>");
 
         res.write("</body>");
         res.end();
