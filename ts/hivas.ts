@@ -1,18 +1,16 @@
 export class Hivas {
 
-   osszIdo: number[];
-   telefonszam: string;
+   osszIdo: number[] = [];
+   telefonszam: string = "39";
 
-   constructor(kezdetiIdo: string, vegeIdo: string, szam: string) {
+   constructor(ido: string, szam: string) {
 
       this.telefonszam = szam;
       this.osszIdo = [0, 0, 0, 0, 0, 0];
 
-      let kIdo: string[] = kezdetiIdo.split(" ");
-      let vIdo: string[] = vegeIdo.split(" ");
+      let spliteltIdo: string[] = ido.split(" ");
 
-      for (let i: number = 0; i < 3; i++) this.osszIdo[i] = parseInt(kIdo[i]);
-      for (let i: number = 3; i < 6; i++) this.osszIdo[i] = parseInt(vIdo[i]);
+      for (let i: number = 0; i < 6; i++) this.osszIdo[i] = parseInt(spliteltIdo[i]);
       
    }
 
@@ -20,26 +18,22 @@ export class Hivas {
 
       if (this.telefonszam.substring(0, 2) === "39" ||
          this.telefonszam.substring(0, 2) === "41" ||
-         this.telefonszam.substring(0, 2) === "71") {
-         return true;
-      }
-      else {
-         return false;
-      }
-
+         this.telefonszam.substring(0, 2) === "71") return true;
+      else  return false;
    }
 
-   HosszPercben(): number {
-      let perc: number = (this.osszIdo[3] * 3600 + this.osszIdo[4] + this.osszIdo[5] / 60) - (this.osszIdo[0] * 3600 + this.osszIdo[1] + this.osszIdo[2] / 60);
-      return 11;
+   HosszMPercben(): number {
+      return  (this.osszIdo[3] - this.osszIdo[0]) * 3600 + (this.osszIdo[4] - this.osszIdo[1]) * 60 + this.osszIdo[5] - this.osszIdo[2];
    }
 
    KiszamlazottPercek(): number {
-      if (this.HosszPercben() < Math.round(this.HosszPercben())) return Math.round(this.HosszPercben());
-      else return parseInt(this.HosszPercben().toFixed(0))+1;
+      let retrunErtek: number = parseInt((this.HosszMPercben() / 60)+"");
+      if (this.HosszMPercben() % 60 != 0) retrunErtek = retrunErtek + 1;
+      return retrunErtek;
    }
 
-   /*Telefonszam(): string {
-      return this.telefonszam;
-   }*/
+   CsucsIdo(): boolean {
+      if (this.osszIdo[0] >= 7 && this.osszIdo[0] <= 18) return true;
+      else return false;
+   }
 }
