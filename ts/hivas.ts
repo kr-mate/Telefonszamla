@@ -6,12 +6,11 @@ export class Hivas {
    constructor(ido: string, szam: string) {
 
       this.telefonszam = szam;
-      this.osszIdo = [0, 0, 0, 0, 0, 0];
 
-      let spliteltIdo: string[] = ido.split(" ");
+      const spliteltIdo: string[] = ido.split(" ");
 
       for (let i: number = 0; i < 6; i++) this.osszIdo[i] = parseInt(spliteltIdo[i]);
-      
+
    }
 
    Mobilszam(): boolean {
@@ -27,8 +26,8 @@ export class Hivas {
    }
 
    KiszamlazottPercek(): number {
-      let retrunErtek: number = parseInt((this.HosszMPercben() / 60)+"");
-      if (this.HosszMPercben() % 60 != 0) retrunErtek = retrunErtek + 1;
+      let retrunErtek: number = parseInt((this.HosszMPercben() / 60) + "");
+      if (this.HosszMPercben() % 60 !== 0) retrunErtek = retrunErtek + 1;
       return retrunErtek;
    }
 
