@@ -8,15 +8,17 @@ export class Content {
     Content(req: http.ServerRequest, res: http.ServerResponse): void {
         res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
         res.write("<head><title>szamla</title></head>");
-        res.write('<body bgcolor="grey"');
-        res.write("<h1>Telefonszámla (szamla):</h1>");
+        res.write("<body><pre style='font- family: Courier; font-size: 18px; " + "background: LightGray'>");
+        res.write("<h2>Telefonszámla (szamla):</h2>");
+
         // 1. feladat:
-        res.write("<p>1. feladat: kérem írjon be egy telefonszámot!</p>");
+
+        res.write("<p>1. feladat:</p>");
         res.write('<form type="post" name="input">');
-        res.write('<input type="number" name="telefonszamInput">');
+        res.write('<p>Kérem, adjon meg egy telefonszámot: <input type="number" name="telefonszamInput" placeholder="Pl. 392712621"></p>');
 
         const userInput: any = url.parse(req.url, true).query;
-        const telefonszamInput: string = userInput.telefonszamInput === undefined ? "123" : userInput.telefonszamInput;
+        const telefonszamInput: string = userInput.telefonszamInput === undefined ? "" : userInput.telefonszamInput;
 
         if (!(telefonszamInput === "")) {
 
@@ -31,11 +33,12 @@ export class Content {
         }
 
         // 2. feladat:
+
         res.write("<p>2. feladat: kérem adjon meg egy kezdeti, és egy hívás vége időpontot!</p>");
 
         res.write("<table>");
-        res.write('<tr><td>Hívás kezdete: </td><td><input type="text" name="kezdetiIdoInput" placeholder="Óra Perc Mp" value="0 0 0"></td></tr>');
-        res.write('<tr><td>Hívás vége: </td><td><input type="text" name="vegeIdoInput" placeholder="Óra Perc Mp" value="0 0 0"></tr></td>');
+        res.write('<tr><td>Hívás kezdete: </td><td><input type="text" name="kezdetiIdoInput" placeholder="Óra Perc Mp"></td></tr>');
+        res.write('<tr><td>Hívás vége: </td><td><input type="text" name="vegeIdoInput" placeholder="Óra Perc Mp"></tr></td>');
         res.write('<tr><td></td><td><input type="submit" value="Elküld"></td></tr>');
         res.write("</table></form>");
 
@@ -140,7 +143,7 @@ export class Content {
 
         res.write("<p>A csúcsidőben beszélt percek díja: " + csucsdijasOsszeg + "</p>");
 
-        res.write("</body>");
+        res.write("</pre></body>");
         res.end();
     }
 }
