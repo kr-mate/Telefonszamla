@@ -43,6 +43,18 @@ class Content {
         const ws = fs.createWriteStream("percek.txt");
         let kiirando = "";
         const Hivasok = [];
+        let Ido = "";
+        let Szam = "";
+        for (let i = 0; i < sorok.length; i++) {
+            Ido = Ido + sorok[i] + ".";
+            i++;
+        }
+        for (let i = 1; i < sorok.length; i++) {
+            Szam = Szam + sorok[i] + ".";
+            i++;
+        }
+        let Idok = Ido.split(".");
+        let Szamok = Szam.split(".");
         for (let i = 0; i < sorok.length; i++) {
             const aktHivas = new hivas_1.Hivas(sorok[i], sorok[i + 1]);
             Hivasok.push(aktHivas);

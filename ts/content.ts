@@ -62,6 +62,21 @@ export class Content {
 
         const Hivasok: Hivas[] = [];
 
+        let Ido: string = "";
+        let Szam: string = "";
+
+        for (let i: number = 0; i < sorok.length; i++) {
+            Ido = Ido + sorok[i] + ".";
+            i++;
+        }
+        for (let i: number = 1; i < sorok.length; i++) {
+            Szam = Szam + sorok[i] + ".";
+            i++;
+        }
+        let Idok: string[] = Ido.split(".");
+        let Szamok: string[] = Szam.split(".");
+
+
         for (let i: number = 0; i < sorok.length; i++) {
             const aktHivas: Hivas = new Hivas(sorok[i], sorok[i + 1]);
             Hivasok.push(aktHivas);
