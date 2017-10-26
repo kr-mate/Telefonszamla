@@ -11,6 +11,7 @@ export class Content {
         res.write('<body bgcolor="grey"');
         res.write("<h1>Telefonszámla (szamla):</h1>");
         //1. feladat:
+        
         res.write("<p>1. feladat: kérem írjon be egy telefonszámot!</p>");
         res.write('<form type="post" name="input">');
         res.write('<input type="number" name="telefonszamInput">');
