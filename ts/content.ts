@@ -34,18 +34,19 @@ export class Content {
 
         // 2. feladat:
 
-        res.write("<p>2. feladat: kérem adjon meg egy kezdeti, és egy hívás vége időpontot!</p>");
+        res.write("<p>2. feladat:</p>");
 
-        res.write("<table>");
+        res.write('<table style="font-size: 18px">');
+        res.write("<p>Kérem adja meg a hívás kezdetének, illetve befejezésének időpontját:</p>");
         res.write('<tr><td>Hívás kezdete: </td><td><input type="text" name="kezdetiIdoInput" placeholder="Óra Perc Mp"></td></tr>');
         res.write('<tr><td>Hívás vége: </td><td><input type="text" name="vegeIdoInput" placeholder="Óra Perc Mp"></tr></td>');
         res.write('<tr><td></td><td><input type="submit" value="Elküld"></td></tr>');
         res.write("</table></form>");
 
-        const kezdetiIdoInput: string = userInput.kezdetiIdoInput === undefined ? "1 2 3" : userInput.kezdetiIdoInput;
-        const vegeIdoInput: string = userInput.vegeIdoInput === undefined ? "1 2 3" : userInput.vegeIdoInput;
+        const kezdetiIdoInput: string = userInput.kezdetiIdoInput === undefined ? "" : userInput.kezdetiIdoInput;
+        const vegeIdoInput: string = userInput.vegeIdoInput === undefined ? "" : userInput.vegeIdoInput;
 
-        if (!(kezdetiIdoInput === "") && !(vegeIdoInput === "")) {
+        if (kezdetiIdoInput !== "" && vegeIdoInput !== "") {
 
             const mostaniHivas: Hivas = new Hivas(kezdetiIdoInput + " " + vegeIdoInput, telefonszamInput);
 
@@ -65,15 +66,15 @@ export class Content {
         let Ido: string = "";
         let Szam: string = "";
 
-        for (let i: number = 0; i < sorok.length; i=i+2) Ido = Ido + sorok[i] + ".";
-        
-        for (let i: number = 1; i < sorok.length; i=i+2) Szam = Szam + sorok[i] + ".";
-        
-        let Idok: string[] = Ido.split(".");
-        let Szamok: string[] = Szam.split(".");
+        for (let i: number = 0; i < sorok.length; i = i + 2) Ido = Ido + sorok[i] + ".";
+
+        for (let i: number = 1; i < sorok.length; i = i + 2) Szam = Szam + sorok[i] + ".";
+
+        const Idok: string[] = Ido.split(".");
+        const Szamok: string[] = Szam.split(".");
 
 
-        for (let i: number = 0; i < Idok.length-1; i++) {
+        for (let i: number = 0; i < Idok.length - 1; i++) {
             const aktHivas: Hivas = new Hivas(Idok[i], Szamok[i]);
             Hivasok.push(aktHivas);
         }
@@ -91,12 +92,12 @@ export class Content {
         let dbNemCsucsido: number = 0;
 
         for (let i: number = 0; i < Hivasok.length; i++) {
-            if (Hivasok[i].CsucsIdo() == true) dbCsucsido++;
+            if (Hivasok[i].CsucsIdo() === true) dbCsucsido++;
             else  dbNemCsucsido++;
         }
 
-        res.write("<p>Csúcsidőbeli hívások száma: " + dbCsucsido + "</p>");
-        res.write("<p>Nem csúcsidőbeli hívások száma: " + dbNemCsucsido + "</p>");
+        res.write("<p>Csúcsidőben kezdett hívások száma: " + dbCsucsido + ".</p>");
+        res.write("<p>Csúcsidőn kívül kezdett hívások száma: " + dbNemCsucsido + ".</p>");
 
         // 5. feladat:
 
@@ -106,7 +107,7 @@ export class Content {
         let osszVezetkesesPerc: number = 0;
 
         for (let i: number = 0; i < Hivasok.length; i++) {
-            if (Hivasok[i].Mobilszam() == true) osszMobilszamPerc = osszMobilszamPerc + Hivasok[i].KiszamlazottPercek();
+            if (Hivasok[i].Mobilszam() === true) osszMobilszamPerc = osszMobilszamPerc + Hivasok[i].KiszamlazottPercek();
             else osszVezetkesesPerc = osszVezetkesesPerc + Hivasok[i].KiszamlazottPercek();
         }
 
@@ -126,7 +127,7 @@ export class Content {
             }
         }
 
-        res.write("<p>A csúcsidőben beszélt percek díja: " + Math.round(csucsdijasOsszeg) + " Ft.</p>");
+        res.write("<p>A csúcsidőben történt hívások összdíja: " + Math.round(csucsdijasOsszeg) + " Ft.</p>");
 
         res.write("</pre></body>");
         res.end();
