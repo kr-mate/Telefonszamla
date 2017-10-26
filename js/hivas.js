@@ -27,7 +27,7 @@ class Hivas {
         return retrunErtek;
     }
     CsucsIdo() {
-        if (this.osszIdo[0] >= 7 && this.osszIdo[0] <= 18)
+        if (this.osszIdo[0] >= 7 && this.osszIdo[0] < 18)
             return true;
         else
             return false;

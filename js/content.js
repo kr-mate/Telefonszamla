@@ -45,38 +45,29 @@ class Content {
         const Hivasok = [];
         let Ido = "";
         let Szam = "";
-        for (let i = 0; i < sorok.length; i++) {
+        for (let i = 0; i < sorok.length; i = i + 2)
             Ido = Ido + sorok[i] + ".";
-            i++;
-        }
-        for (let i = 1; i < sorok.length; i++) {
+        for (let i = 1; i < sorok.length; i = i + 2)
             Szam = Szam + sorok[i] + ".";
-            i++;
-        }
         let Idok = Ido.split(".");
         let Szamok = Szam.split(".");
-        for (let i = 0; i < sorok.length; i++) {
-            const aktHivas = new hivas_1.Hivas(sorok[i], sorok[i + 1]);
+        for (let i = 0; i < Idok.length - 1; i++) {
+            const aktHivas = new hivas_1.Hivas(Idok[i], Szamok[i]);
             Hivasok.push(aktHivas);
         }
         for (let i = 0; i < Hivasok.length; i++) {
             kiirando = "" + Hivasok[i].KiszamlazottPercek() + " " + Hivasok[i].telefonszam;
-            i++;
             ws.write(kiirando + "\r\n");
         }
         // 4. feladat:
         res.write("<p>4. feladat:</p>");
         let dbCsucsido = 0;
         let dbNemCsucsido = 0;
-        for (let i = 0; i < sorok.length; i++) {
-            const seged = sorok[i].split(" ");
-            if (parseInt(seged[0]) >= 7 && parseInt(seged[0]) <= 18)
+        for (let i = 0; i < Hivasok.length; i++) {
+            if (Hivasok[i].CsucsIdo() == true)
                 dbCsucsido++;
             else
                 dbNemCsucsido++;
-            i++;
-            // if (Hivasok[i].CsucsIdo() == true) dbCsucsido++;
-            // else dbNemCsucsido++;
         }
         res.write("<p>Csúcsidőbeli hívások száma: " + dbCsucsido + "</p>");
         res.write("<p>Nem csúcsidőbeli hívások száma: " + dbNemCsucsido + "</p>");
@@ -84,30 +75,18 @@ class Content {
         res.write("<p>5. feladat:</p>");
         let osszMobilszamPerc = 0;
         let osszVezetkesesPerc = 0;
-        for (let i = 0; i < sorok.length; i = i + 2) {
-            const aktualisHivas = new hivas_1.Hivas(sorok[i], sorok[i + 1]);
-            if (aktualisHivas.Mobilszam() === true) {
-                osszMobilszamPerc = osszMobilszamPerc + aktualisHivas.HosszMPercben();
-            }
+        for (let i = 0; i < Hivasok.length; i++) {
+            if (Hivasok[i].Mobilszam() == true)
+                osszMobilszamPerc = osszMobilszamPerc + Hivasok[i].KiszamlazottPercek();
             else
-                osszVezetkesesPerc = osszVezetkesesPerc + aktualisHivas.HosszMPercben();
+                osszVezetkesesPerc = osszVezetkesesPerc + Hivasok[i].KiszamlazottPercek();
         }
-        res.write("<p>Mobilszámon beszélgetett percek: " + osszMobilszamPerc + "</p>");
-        res.write("<p>Vezetékes számon beszélgetett percek: " + osszVezetkesesPerc + "</p>");
+        res.write("<p>Mobilszámon beszélgetett percek: " + osszMobilszamPerc + " perc.</p>");
+        res.write("<p>Vezetékes számon beszélgetett percek: " + osszVezetkesesPerc + " perc.</p>");
         // 6. feladat:
         res.write("<p>6. feladat:</p>");
         let csucsdijasOsszeg = 0;
         for (let i = 0; i < Hivasok.length; i++) {
-            /*let stringSeged: string[] = sorok[i].split(" ");
-
-            if (parseInt(stringSeged[0]) >= 7 && parseInt(stringSeged[0]) <= 18) { //Amennyiben csúcsdíjas
-
-                let aktualisHivas: Hivas = new Hivas(sorok[i], sorok[i + 1]); //lehetséges hogy ki fog indexelni
-
-                if (aktualisHivas.Mobilszam() == true)
-                    csucsdijasOsszeg = csucsdijasOsszeg + aktualisHivas.KiszamlazottPercek() * 69.175;
-                else csucsdijasOsszeg = csucsdijasOsszeg + aktualisHivas.KiszamlazottPercek() * 30;
-            } */
             if (Hivasok[i].CsucsIdo() === true) {
                 if (Hivasok[i].Mobilszam() === true)
                     csucsdijasOsszeg = csucsdijasOsszeg + Hivasok[i].KiszamlazottPercek() * 69.175;

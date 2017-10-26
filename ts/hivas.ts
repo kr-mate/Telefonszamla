@@ -32,7 +32,7 @@ export class Hivas {
    }
 
    CsucsIdo(): boolean {
-      if (this.osszIdo[0] >= 7 && this.osszIdo[0] <= 18) return true;
+      if (this.osszIdo[0] >= 7 && this.osszIdo[0] < 18) return true;
       else return false;
    }
 }
