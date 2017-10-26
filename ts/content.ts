@@ -1,4 +1,4 @@
-﻿import * as http from "http";
+import * as http from "http";
 import * as url from "url"; // űrlapokhoz, input kiolvasás
 import * as fs from "fs"; // file-kezelés
 import { Hivas } from "./hivas";
