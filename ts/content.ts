@@ -62,7 +62,7 @@ export class Content {
 
         const Hivasok: Hivas[] = [];
 
-        for (let i: number = 0; i < sorok.length; i = i + 2) {
+        for (let i: number = 0; i < sorok.length; i++) {
             const aktHivas: Hivas = new Hivas(sorok[i], sorok[i + 1]);
             Hivasok.push(aktHivas);
         }
@@ -141,7 +141,7 @@ export class Content {
             }
         }
 
-        res.write("<p>A csúcsidőben beszélt percek díja: " + csucsdijasOsszeg + "</p>");
+        res.write("<p>A csúcsidőben beszélt percek díja: " + Math.round(csucsdijasOsszeg) + " Ft.</p>");
 
         res.write("</pre></body>");
         res.end();

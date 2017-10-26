@@ -43,7 +43,7 @@ class Content {
         const ws = fs.createWriteStream("percek.txt");
         let kiirando = "";
         const Hivasok = [];
-        for (let i = 0; i < sorok.length; i = i + 2) {
+        for (let i = 0; i < sorok.length; i++) {
             const aktHivas = new hivas_1.Hivas(sorok[i], sorok[i + 1]);
             Hivasok.push(aktHivas);
         }
@@ -103,7 +103,7 @@ class Content {
                     csucsdijasOsszeg = csucsdijasOsszeg + Hivasok[i].KiszamlazottPercek() * 30;
             }
         }
-        res.write("<p>A csúcsidőben beszélt percek díja: " + csucsdijasOsszeg + "</p>");
+        res.write("<p>A csúcsidőben beszélt percek díja: " + Math.round(csucsdijasOsszeg) + " Ft.</p>");
         res.write("</pre></body>");
         res.end();
     }
