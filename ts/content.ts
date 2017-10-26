@@ -1,4 +1,4 @@
-﻿import * as http from "http";
+import * as http from "http";
 import * as url from "url"; // űrlapokhoz, input kiolvasás
 import * as fs from "fs"; // file-kezelés
 import { Hivas } from "./hivas";
@@ -65,26 +65,21 @@ export class Content {
         let Ido: string = "";
         let Szam: string = "";
 
-        for (let i: number = 0; i < sorok.length; i++) {
-            Ido = Ido + sorok[i] + ".";
-            i++;
-        }
-        for (let i: number = 1; i < sorok.length; i++) {
-            Szam = Szam + sorok[i] + ".";
-            i++;
-        }
+        for (let i: number = 0; i < sorok.length; i=i+2) Ido = Ido + sorok[i] + ".";
+        
+        for (let i: number = 1; i < sorok.length; i=i+2) Szam = Szam + sorok[i] + ".";
+        
         let Idok: string[] = Ido.split(".");
         let Szamok: string[] = Szam.split(".");
 
 
-        for (let i: number = 0; i < sorok.length; i++) {
-            const aktHivas: Hivas = new Hivas(sorok[i], sorok[i + 1]);
+        for (let i: number = 0; i < Idok.length-1; i++) {
+            const aktHivas: Hivas = new Hivas(Idok[i], Szamok[i]);
             Hivasok.push(aktHivas);
         }
 
         for (let i: number = 0; i < Hivasok.length; i++) {
             kiirando = "" + Hivasok[i].KiszamlazottPercek() + " " + Hivasok[i].telefonszam;
-            i++;
             ws.write(kiirando + "\r\n");
         }
 
@@ -95,16 +90,9 @@ export class Content {
         let dbCsucsido: number = 0;
         let dbNemCsucsido: number = 0;
 
-        for (let i: number = 0; i < sorok.length; i++) {
-
-            const seged: string[] = sorok[i].split(" ");
-
-            if (parseInt(seged[0]) >= 7 && parseInt(seged[0]) <= 18) dbCsucsido++;
-            else dbNemCsucsido++;
-            i++;
-
-            // if (Hivasok[i].CsucsIdo() == true) dbCsucsido++;
-            // else dbNemCsucsido++;
+        for (let i: number = 0; i < Hivasok.length; i++) {
+            if (Hivasok[i].CsucsIdo() == true) dbCsucsido++;
+            else  dbNemCsucsido++;
         }
 
         res.write("<p>Csúcsidőbeli hívások száma: " + dbCsucsido + "</p>");
@@ -117,19 +105,13 @@ export class Content {
         let osszMobilszamPerc: number = 0;
         let osszVezetkesesPerc: number = 0;
 
-        for (let i: number = 0; i < sorok.length; i = i + 2) {
-
-            const aktualisHivas: Hivas = new Hivas(sorok[i], sorok[i + 1]);
-
-            if (aktualisHivas.Mobilszam() === true) {
-                osszMobilszamPerc = osszMobilszamPerc + aktualisHivas.HosszMPercben();
-            }
-            else osszVezetkesesPerc = osszVezetkesesPerc + aktualisHivas.HosszMPercben();
-
+        for (let i: number = 0; i < Hivasok.length; i++) {
+            if (Hivasok[i].Mobilszam() == true) osszMobilszamPerc = osszMobilszamPerc + Hivasok[i].KiszamlazottPercek();
+            else osszVezetkesesPerc = osszVezetkesesPerc + Hivasok[i].KiszamlazottPercek();
         }
 
-        res.write("<p>Mobilszámon beszélgetett percek: " + osszMobilszamPerc + "</p>");
-        res.write("<p>Vezetékes számon beszélgetett percek: " + osszVezetkesesPerc + "</p>");
+        res.write("<p>Mobilszámon beszélgetett percek: " + osszMobilszamPerc + " perc.</p>");
+        res.write("<p>Vezetékes számon beszélgetett percek: " + osszVezetkesesPerc + " perc.</p>");
 
         // 6. feladat:
 
@@ -138,18 +120,6 @@ export class Content {
         let csucsdijasOsszeg: number = 0;
 
         for (let i: number = 0; i < Hivasok.length; i++) {
-
-            /*let stringSeged: string[] = sorok[i].split(" ");
-
-            if (parseInt(stringSeged[0]) >= 7 && parseInt(stringSeged[0]) <= 18) { //Amennyiben csúcsdíjas
-
-                let aktualisHivas: Hivas = new Hivas(sorok[i], sorok[i + 1]); //lehetséges hogy ki fog indexelni
-
-                if (aktualisHivas.Mobilszam() == true)
-                    csucsdijasOsszeg = csucsdijasOsszeg + aktualisHivas.KiszamlazottPercek() * 69.175;
-                else csucsdijasOsszeg = csucsdijasOsszeg + aktualisHivas.KiszamlazottPercek() * 30;
-            } */
-
             if (Hivasok[i].CsucsIdo() === true) {
                 if (Hivasok[i].Mobilszam() === true) csucsdijasOsszeg = csucsdijasOsszeg + Hivasok[i].KiszamlazottPercek() * 69.175;
                 else csucsdijasOsszeg = csucsdijasOsszeg + Hivasok[i].KiszamlazottPercek() * 30;
